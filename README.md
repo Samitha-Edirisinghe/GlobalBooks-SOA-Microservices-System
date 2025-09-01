@@ -1,9 +1,8 @@
-I'll enhance the README.md by adding the provided details in a structured and comprehensive way. Here's the improved version:
-
-```markdown
 # GlobalBooks SOA System
 
 A comprehensive Service-Oriented Architecture system for book ordering, payment processing, and shipping.
+
+```markdown
 
 ## System Overview
 
