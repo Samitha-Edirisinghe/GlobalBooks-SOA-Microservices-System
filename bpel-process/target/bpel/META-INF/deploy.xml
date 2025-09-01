@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns:tns="http://globalbooks.com/bpel/placeorder/">
+    
+    <process name="tns:PlaceOrderProcess">
+        <active>true</active>
+        <retired>false</retired>
+        <process-events>true</process-events>
+        <instance-events>true</instance-events>
+        
+        <provide partnerLink="customer">
+            <service name="tns:PlaceOrderService" port="PlaceOrderPort"/>
+        </provide>
+        
+        <invoke partnerLink="catalogService">
+            <service name="cat:CatalogService" port="CatalogPort"/>
+        </invoke>
+        
+        <invoke partnerLink="ordersService">
+            <service name="ord:OrdersService" port="OrdersPort"/>
+        </invoke>
+        
+        <!-- Define WSDL locations -->
+        <wsdl-location>CatalogService.wsdl</wsdl-location>
+        <wsdl-location>OrdersService.wsdl</wsdl-location>
+    </process>
+</deploy>
