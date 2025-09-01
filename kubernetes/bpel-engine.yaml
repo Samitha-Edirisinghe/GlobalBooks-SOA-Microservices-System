@@ -1,0 +1,288 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpel-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpel-engine
+  template:
+    metadata:
+      labels:
+        app: bpel-engine
+    spec:
+      containers:
+      - name: bpel-engine
+        image: apache/ode:1.3.8
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ODE_DATA_DIR
+          value: /ode/data
+        - name: ODE_DEPLOY_DIR
+          value: /ode/deploy
+        volumeMounts:
+        - name: bpel-processes
+          mountPath: /ode/deploy
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /ode
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ode
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: bpel-processes
+        configMap:
+          name: bpel-processes
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpel-engine
+spec:
+  selector:
+    app: bpel-engine
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bpel-processes
+data:
+  PlaceOrder.bpel: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <process name="PlaceOrderProcess"
+             targetNamespace="http://globalbooks.com/bpel/placeorder/"
+             xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+             xmlns:tns="http://globalbooks.com/bpel/placeorder/"
+             xmlns:cat="http://catalog.globalbooks.com/"
+             xmlns:ord="http://orders.globalbooks.com/">
+      
+      <!-- Import WSDLs -->
+      <import importType="http://schemas.xmlsoap.org/wsdl/" 
+              location="CatalogService.wsdl" 
+              namespace="http://catalog.globalbooks.com/"/>
+      <import importType="http://schemas.xmlsoap.org/wsdl/" 
+              location="OrdersService.wsdl" 
+              namespace="http://orders.globalbooks.com/"/>
+      
+      <!-- Partner Links -->
+      <partnerLinks>
+        <partnerLink name="customer" 
+                    partnerLinkType="tns:PlaceOrderLT" 
+                    myRole="PlaceOrderService"/>
+        <partnerLink name="catalogService" 
+                    partnerLinkType="cat:CatalogLT" 
+                    partnerRole="CatalogService"/>
+        <partnerLink name="ordersService" 
+                    partnerLinkType="ord:OrdersLT" 
+                    partnerRole="OrdersService"/>
+      </partnerLinks>
+      
+      <!-- Simplified process flow -->
+      <sequence>
+        <receive partnerLink="customer" 
+                portType="tns:PlaceOrderPT" 
+                operation="placeOrder" 
+                variable="input" 
+                createInstance="yes"/>
+        
+        <!-- Call catalog service to get prices -->
+        <invoke partnerLink="catalogService" 
+               portType="cat:CatalogPT" 
+               operation="getBookPrice" 
+               inputVariable="catalogRequest" 
+               outputVariable="catalogResponse"/>
+        
+        <!-- Call orders service to create order -->
+        <invoke partnerLink="ordersService" 
+               portType="ord:OrdersPT" 
+               operation="createOrder" 
+               inputVariable="ordersRequest" 
+               outputVariable="ordersResponse"/>
+        
+        <reply partnerLink="customer" 
+              portType="tns:PlaceOrderPT" 
+              operation="placeOrder" 
+              variable="output"/>
+      </sequence>
+    </process>
+  CatalogService.wsdl: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <definitions name="CatalogService"
+                 targetNamespace="http://catalog.globalbooks.com/"
+                 xmlns="http://schemas.xmlsoap.org/wsdl/"
+                 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                 xmlns:tns="http://catalog.globalbooks.com/"
+                 xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      
+      <types>
+        <xsd:schema targetNamespace="http://catalog.globalbooks.com/">
+          <xsd:element name="getBookPriceRequest">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="isbn" type="xsd:string"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="getBookPriceResponse">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="return" type="xsd:double"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:schema>
+      </types>
+      
+      <message name="GetBookPriceRequest">
+        <part name="parameters" element="tns:getBookPriceRequest"/>
+      </message>
+      <message name="GetBookPriceResponse">
+        <part name="parameters" element="tns:getBookPriceResponse"/>
+      </message>
+      
+      <portType name="CatalogPT">
+        <operation name="getBookPrice">
+          <input message="tns:GetBookPriceRequest"/>
+          <output message="tns:GetBookPriceResponse"/>
+        </operation>
+      </portType>
+      
+      <binding name="CatalogBinding" type="tns:CatalogPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getBookPrice">
+          <soap:operation soapAction=""/>
+          <input>
+            <soap:body use="literal"/>
+          </input>
+          <output>
+            <soap:body use="literal"/>
+          </output>
+        </operation>
+      </binding>
+      
+      <service name="CatalogService">
+        <port name="CatalogPort" binding="tns:CatalogBinding">
+          <soap:address location="http://catalog-service:8080/catalog-service/catalog"/>
+        </port>
+      </service>
+      
+      <plnk:partnerLinkType name="CatalogLT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="CatalogService" portType="tns:CatalogPT"/>
+      </plnk:partnerLinkType>
+    </definitions>
+  OrdersService.wsdl: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <definitions name="OrdersService"
+                 targetNamespace="http://orders.globalbooks.com/"
+                 xmlns="http://schemas.xmlsoap.org/wsdl/"
+                 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                 xmlns:tns="http://orders.globalbooks.com/"
+                 xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      
+      <types>
+        <xsd:schema targetNamespace="http://orders.globalbooks.com/">
+          <xsd:element name="createOrderRequest">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="customerId" type="xsd:string"/>
+                <xsd:element name="items" type="xsd:string"/>
+                <xsd:element name="totalAmount" type="xsd:double"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="createOrderResponse">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="orderId" type="xsd:long"/>
+                <xsd:element name="totalAmount" type="xsd:double"/>
+                <xsd:element name="status" type="xsd:string"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:schema>
+      </types>
+      
+      <message name="CreateOrderRequest">
+        <part name="parameters" element="tns:createOrderRequest"/>
+      </message>
+      <message name="CreateOrderResponse">
+        <part name="parameters" element="tns:createOrderResponse"/>
+      </message>
+      
+      <portType name="OrdersPT">
+        <operation name="createOrder">
+          <input message="tns:CreateOrderRequest"/>
+          <output message="tns:CreateOrderResponse"/>
+        </operation>
+      </portType>
+      
+      <binding name="OrdersBinding" type="tns:OrdersPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createOrder">
+          <soap:operation soapAction=""/>
+          <input>
+            <soap:body use="literal"/>
+          </input>
+          <output>
+            <soap:body use="literal"/>
+          </output>
+        </operation>
+      </binding>
+      
+      <service name="OrdersService">
+        <port name="OrdersPort" binding="tns:OrdersBinding">
+          <soap:address location="http://orders-service:8081/orders"/>
+        </port>
+      </service>
+      
+      <plnk:partnerLinkType name="OrdersLT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="OrdersService" portType="tns:OrdersPT"/>
+      </plnk:partnerLinkType>
+    </definitions>
+  deploy.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
+            xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+            xmlns:tns="http://globalbooks.com/bpel/placeorder/">
+      
+      <process name="tns:PlaceOrderProcess">
+        <active>true</active>
+        <retired>false</retired>
+        <process-events>true</process-events>
+        <instance-events>true</instance-events>
+        
+        <provide partnerLink="customer">
+          <service name="tns:PlaceOrderService" port="PlaceOrderPort"/>
+        </provide>
+        
+        <invoke partnerLink="catalogService">
+          <service name="cat:CatalogService" port="CatalogPort"/>
+        </invoke>
+        
+        <invoke partnerLink="ordersService">
+          <service name="ord:OrdersService" port="OrdersPort"/>
+        </invoke>
+        
+        <wsdl-location>CatalogService.wsdl</wsdl-location>
+        <wsdl-location>OrdersService.wsdl</wsdl-location>
+      </process>
+    </deploy>
