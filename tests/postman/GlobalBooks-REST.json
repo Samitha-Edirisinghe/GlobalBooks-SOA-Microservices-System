@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "GlobalBooks-REST",
+    "description": "Postman collection for GlobalBooks REST APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check - Orders Service",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/actuator/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["actuator", "health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check - Catalog Service",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog-service/catalog?wsdl",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["catalog-service", "catalog"],
+          "query": [
+            {
+              "key": "wsdl",
+              "value": null
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"customer123\",\n  \"items\": [\n    {\n      \"isbn\": \"1234567890\",\n      \"quantity\": 2\n    },\n    {\n      \"isbn\": \"0987654321\", \n      \"quantity\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "protocol": "http",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Orders",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "protocol": "http",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Order by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders/1",
+          "protocol": "http",
+          "host": ["{{baseUrl}}"],
+          "path": ["orders", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Book Price from Catalog",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": ""
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cat=\"http://catalog.globalbooks.com/\">\n   <soap:Body>\n      <cat:getBookPrice>\n         <isbn>1234567890</isbn>\n      </cat:getBookPrice>\n   </soap:Body>\n</soap:Envelope>"
+        },
+        "url": {
+          "raw": "{{catalogUrl}}",
+          "protocol": "http",
+          "host": ["{{catalogUrl}}"],
+          "path": []
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RabbitMQ Management",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic Z3Vlc3Q6Z3Vlc3Q="
+          }
+        ],
+        "url": {
+          "raw": "{{rabbitmqUrl}}/api/queues",
+          "protocol": "http",
+          "host": ["{{rabbitmqUrl}}"],
+          "path": ["api", "queues"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": ["console.log('GlobalBooks REST API Test');"]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Basic test to check if response is successful",
+          "pm.test(\"Status code is successful\", function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+          "});",
+          "",
+          "// For SOAP responses, check if it contains a valid response",
+          "if (pm.request.headers.get('Content-Type') === 'text/xml; charset=utf-8') {",
+          "    pm.test(\"SOAP response is valid\", function () {",
+          "        pm.expect(pm.response.text()).to.include('getBookPriceResponse');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    }
+  ]
+}
