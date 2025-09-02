@@ -1,0 +1,14 @@
+com\globalbooks\orders\model\OrderItem.class
+com\globalbooks\orders\service\CatalogServiceClient.class
+com\globalbooks\orders\config\SecurityConfig.class
+com\globalbooks\orders\messaging\OrderMessageSender.class
+com\globalbooks\orders\service\OrderService.class
+com\globalbooks\orders\messaging\OrderItemMessage.class
+com\globalbooks\orders\config\RabbitMQConfig.class
+com\globalbooks\orders\controller\HomeController.class
+com\globalbooks\orders\OrdersServiceApplication.class
+com\globalbooks\orders\service\CatalogService.class
+com\globalbooks\orders\controller\OrderController.class
+com\globalbooks\orders\repository\OrderRepository.class
+com\globalbooks\orders\messaging\OrderMessage.class
+com\globalbooks\orders\model\Order.class
