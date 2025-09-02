@@ -1,0 +1,4 @@
+com\globalbooks\catalog\CatalogService.class
+com\globalbooks\catalog\security\UsernameTokenSecurityHandler.class
+com\globalbooks\catalog\CatalogServiceImpl.class
+com\globalbooks\catalog\model\Book.class
