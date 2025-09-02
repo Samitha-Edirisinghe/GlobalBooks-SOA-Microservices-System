@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: globalbooks-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+  catalog-service:
+    build: 
+      context: ./catalog-service
+      dockerfile: Dockerfile
+    container_name: globalbooks-catalog
+    ports:
+      - "8080:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+  orders-service:
+    build:
+      context: ./orders-service
+      dockerfile: Dockerfile
+    container_name: globalbooks-orders
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - CATALOG_SERVICE_URL=http://catalog-service:8080/catalog-service/catalog?wsdl
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      catalog-service:
+        condition: service_started
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+  payments-service:
+    build:
+      context: ./payments-service
+      dockerfile: Dockerfile
+    container_name: globalbooks-payments
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+  shipping-service:
+    build:
+      context: ./shipping-service
+      dockerfile: Dockerfile
+    container_name: globalbooks-shipping
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+  # Corrected service name to match folder name
+  bpel-process:
+    build:
+      context: ./bpel-process
+      dockerfile: Dockerfile
+    container_name: globalbooks-bpel
+    ports:
+      - "8084:8080"
+    volumes:
+      - ./bpel-process/target/bpel:/ode/bpel
+    depends_on:
+      - catalog-service
+      - orders-service
+    networks:
+      - globalbooks-network
+    restart: unless-stopped
+
+networks:
+  globalbooks-network:
+    driver: bridge
+    name: globalbooks-network
