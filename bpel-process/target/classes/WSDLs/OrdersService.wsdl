@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="OrdersService"
+             targetNamespace="http://orders.globalbooks.com/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://orders.globalbooks.com/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+    <types>
+        <xsd:schema targetNamespace="http://orders.globalbooks.com/">
+            <xsd:element name="createOrderRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="customerId" type="xsd:string"/>
+                        <xsd:element name="items" type="xsd:string"/>
+                        <xsd:element name="totalAmount" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="createOrderResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="orderId" type="xsd:long"/>
+                        <xsd:element name="totalAmount" type="xsd:double"/>
+                        <xsd:element name="status" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    
+    <message name="CreateOrderRequest">
+        <part name="parameters" element="tns:createOrderRequest"/>
+    </message>
+    <message name="CreateOrderResponse">
+        <part name="parameters" element="tns:createOrderResponse"/>
+    </message>
+    
+    <portType name="OrdersPT">
+        <operation name="createOrder">
+            <input message="tns:CreateOrderRequest"/>
+            <output message="tns:CreateOrderResponse"/>
+        </operation>
+    </portType>
+    
+    <binding name="OrdersBinding" type="tns:OrdersPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createOrder">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="OrdersService">
+        <port name="OrdersPort" binding="tns:OrdersBinding">
+            <soap:address location="http://localhost:8081/orders"/>
+        </port>
+    </service>
+    
+    <plnk:partnerLinkType name="OrdersLT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="OrdersService" portType="tns:OrdersPT"/>
+    </plnk:partnerLinkType>
+</definitions>
