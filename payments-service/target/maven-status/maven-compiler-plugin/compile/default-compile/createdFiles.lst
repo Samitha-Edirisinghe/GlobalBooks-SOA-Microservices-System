@@ -1,9 +1,0 @@
-com\globalbooks\payments\listener\OrderItemMessage.class
-com\globalbooks\payments\service\PaymentService.class
-com\globalbooks\payments\listener\OrderMessage.class
-com\globalbooks\payments\listener\PaymentListener.class
-com\globalbooks\payments\model\Payment.class
-com\globalbooks\payments\PaymentsServiceApplication.class
-com\globalbooks\payments\repository\PaymentRepository.class
-com\globalbooks\payments\config\RabbitMQConfig.class
-com\globalbooks\payments\HealthController.class
