@@ -1,0 +1,9 @@
+com\globalbooks\shipping\service\ShippingService.class
+com\globalbooks\shipping\model\Shipment.class
+com\globalbooks\shipping\listener\OrderItemMessage.class
+com\globalbooks\shipping\listener\ShippingListener.class
+com\globalbooks\shipping\repository\ShipmentRepository.class
+com\globalbooks\shipping\listener\OrderMessage.class
+com\globalbooks\shipping\ShippingServiceApplication.class
+com\globalbooks\shipping\config\RabbitMQConfig.class
+com\globalbooks\shipping\HealthController.class
