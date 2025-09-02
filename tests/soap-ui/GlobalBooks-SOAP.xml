@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="GlobalBooks-SOAP" id="fc60df52-45d1-4f58-8386-701579fd899f" activeEnvironment="Default" abortOnError="false" runType="SEQUENTIAL" soapui-version="5.9.0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings/>
+  <con:interface xsi:type="con:WsdlInterface" name="CatalogService" wsaVersion="NONE" type="wsdl" bindingName="{http://catalog.globalbooks.com/}CatalogServiceBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/catalog-service/catalog?wsdl" id="a6f45b5c-5f6e-4f1c-a0a9-6c0d8b8c8b8c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:definitionCache/>
+    <con:endpoints>
+      <con:endpoint>http://localhost:8080/catalog-service/catalog</con:endpoint>
+    </con:endpoints>
+    <con:operation name="getBookDetails" id="d4c4b4b4-4b4b-4b4b-4b4b-4b4b4b4b4b4b" isOneWay="false" type="Request-Response">
+      <con:settings/>
+      <con:call name="Request 1" id="c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/catalog-service/catalog</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:getBookDetails>
+         <isbn>1234567890</isbn>
+      </catalog:getBookDetails>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+        <con:assertion type="SOAP Response" id="a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1"/>
+        <con:assertion type="Schema Compliance" id="b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2"/>
+        <con:assertion type="SOAP Fault" id="c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3"/>
+      </con:call>
+    </con:operation>
+    <con:operation name="getBookPrice" id="d5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d5d5" isOneWay="false" type="Request-Response">
+      <con:settings/>
+      <con:call name="Request 1" id="e6e6e6e6-e6e6-e6e6-e6e6-e6e6e6e6e6e6">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/catalog-service/catalog</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:getBookPrice>
+         <isbn>1234567890</isbn>
+      </catalog:getBookPrice>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+      </con:call>
+    </con:operation>
+    <con:operation name="checkAvailability" id="f7f7f7f7-f7f7-f7f7-f7f7-f7f7f7f7f7f7" isOneWay="false" type="Request-Response">
+      <con:settings/>
+      <con:call name="Request 1" id="g8g8g8g8-g8g8-g8g8-g8g8-g8g8g8g8g8g8">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>http://localhost:8080/catalog-service/catalog</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:checkAvailability>
+         <isbn>1234567890</isbn>
+         <quantity>2</quantity>
+      </catalog:checkAvailability>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+      </con:call>
+    </con:operation>
+  </con:interface>
+  <con:testSuite name="TestSuite 1" id="h9h9h9h9-h9h9-h9h9-h9h9-h9h9h9h9h9h9">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase name="TestCase 1" id="i0i0i0i0-i0i0-i0i0-i0i0-i0i0i0i0i0i0" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0">
+      <con:settings/>
+      <con:testStep type="request" name="getBookDetails" id="j1j1j1j1-j1j1-j1j1-j1j1-j1j1j1j1j1j1">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" name="getBookDetails" interface="CatalogService" operation="getBookDetails" id="k2k2k2k2-k2k2-k2k2-k2k2-k2k2k2k2k2k2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:settings/>
+          <con:config>
+            <con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:getBookDetails>
+         <isbn>1234567890</isbn>
+      </catalog:getBookDetails>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+          </con:config>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="getBookPrice" id="l3l3l3l3-l3l3-l3l3-l3l3-l3l3l3l3l3l3">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" name="getBookPrice" interface="CatalogService" operation="getBookPrice" id="m4m4m4m4-m4m4-m4m4-m4m4-m4m4m4m4m4m4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:settings/>
+          <con:config>
+            <con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:getBookPrice>
+         <isbn>1234567890</isbn>
+      </catalog:getBookPrice>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+          </con:config>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="checkAvailability" id="n5n5n5n5-n5n5-n5n5-n5n5-n5n5n5n5n5n5">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" name="checkAvailability" interface="CatalogService" operation="checkAvailability" id="o6o6o6o6-o6o6-o6o6-o6o6-o6o6o6o6o6o6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:settings/>
+          <con:config>
+            <con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:catalog="http://catalog.globalbooks.com/">
+   <soap:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>admin</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">admin123</wsse:Password>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soap:Header>
+   <soap:Body>
+      <catalog:checkAvailability>
+         <isbn>1234567890</isbn>
+         <quantity>2</quantity>
+      </catalog:checkAvailability>
+   </soap:Body>
+</soap:Envelope>]]></con:request>
+          </con:config>
+        </con:config>
+      </con:testStep>
+    <con:properties/></con:testCase>
+  <con:properties/></con:testSuite>
+  <con:properties/>
+  <con:wssContainer/>
+  <con:oAuth2ProfileContainer/>
+  <con:oAuth1ProfileContainer/>
+  <con:sensitiveInformation/>
+</con:soapui-project>
